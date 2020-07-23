@@ -11,4 +11,9 @@ If you are uploading a new lambda function, upload to AWS Lambda with
 
 
 # How to add features and bugfixes
-For any new feature, create a new branch with title <author-name>_feature_<feature-name>. For a bug fix, create a new branch with title <author-name>_bugfix_<bugfix-name>. For any other standard update, create a new branch with title <author-name>_update_<update-name>.
+For any new feature, create a new branch with title 
+`<author-name>_feature_<feature-name>`. 
+For a bug fix, create a new branch with title 
+`<author-name>_bugfix_<bugfix-name>`. 
+For any other standard update, create a new branch with title 
+`<author-name>_update_<update-name>`.
