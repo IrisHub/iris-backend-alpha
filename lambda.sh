@@ -49,7 +49,14 @@ if [ "${ENVIRONMENT}" = python ]
 then
 	cd "python"
 	cd "${FOLDER}"
-	zip function.zip 
+	zip function.zip *
+	if [ "$1" = launch ]
+	then
+		aws lambda create-function --function-name "${NAME}" --runtime python3.8 --zip-file fileb://function.zip --role arn:aws:iam::180390500254:role/lambda_default
+	fi
+	if [ "$1" = update ]
+		aws lambda update-function-code --funtion-name "${NAME}" --zip-file fileb://function.zip
+	fi
 fi
 # echo "Environment  = ${ENVIRONMENT}"
 # echo "Folder     = ${FOLDER}"
