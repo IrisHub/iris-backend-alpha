@@ -1,7 +1,7 @@
 import json, os, time, random
 
 def event_handler(event, context):
-	options = json.load(open('info.json', 'r+'))
+	options = json.load(open('info.json', 'r'))
 	ret = {}
 	ret['title'] = "Lunch under 30min"
 	ret['subtitle'] = "For you"
