@@ -13,10 +13,16 @@ spice_tolerance = ["Low", "Medium", "High"]
 
 
 def event_handler(event, context):
-
-	user_id = event['user_id']
+	print("Event:")
+	print(json.dumps(event))
+	if 'user_id' in event.keys():
+		user_id = event['user_id']
+	elif 'body' in event.keys():
+		user_id = json.loads(event['body'])['user_id']
 	if not user_id:
 		user_id = '17ef5c4b-3ac9-4548-a309-41e30a61c6e8'
+
+	print(user_id)
 
 	dynamodb = boto3.client('dynamodb')
 
@@ -24,18 +30,16 @@ def event_handler(event, context):
 	# table = dynamodb.Table('iris_users')
 
 	try:
-		response = dynamodb.get_item(TableName='iris_users', Key={'user_id':{"S":user_id}})
+		response = dynamodb.get_item(TableName='iris_users', Key={"user_id":{"S":str(user_id)}})
+		print("Response:")
+		print(json.dumps(response))
 		response = response["Item"]
 	except ClientError as e:
 		print(e.response['Error']['Message'])
-	# else:
-	# 	return response
-
 	
 
 	etching = "Created for you"
 	user_number = f"User #{response['user_number']['N']}"
-	print("DONE")
 	preferences = [None] * 7
 	preferences[0] = {
 		'title': 'Diet',
@@ -73,5 +77,5 @@ def event_handler(event, context):
 		'items': [{'name': e, 'selected': True if e in [e['S'] for e in response['preferences']['M']['disliked_foods']['L']] else False}for e in disliked_foods]
 	}
 
-
-	return {'etching': etching, 'user_number': user_number, 'preferences':preferences}
+	print({'etching': etching, 'user_number': user_number, 'preferences':preferences})
+	return json.loads(json.dumps({'etching': etching, 'user_number': user_number, 'preferences':preferences}))
