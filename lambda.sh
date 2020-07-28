@@ -66,16 +66,16 @@ then
 	if [ "$1" = launch ]
 	then
 		case "${PERM}" in
-			"default") aws lambda create-function --function-name "${NAME}" --runtime python3.8 --zip-file fileb://function.zip --handler event_handler --role arn:aws:iam::180390500254:role/lambda_default
+			"default") aws lambda create-function --function-name "${NAME}" --runtime python3.8 --zip-file fileb://function.zip --handler main.event_handler --role arn:aws:iam::180390500254:role/lambda_default
 			;;
-			"dynamodb_full") aws lambda create-function --function-name "${NAME}" --runtime python3.8 --zip-file fileb://function.zip --handler event_handler --role arn:aws:iam::180390500254:role/lambda_dynamodb_full
+			"dynamodb_full") aws lambda create-function --function-name "${NAME}" --runtime python3.8 --zip-file fileb://function.zip --handler main.event_handler --role arn:aws:iam::180390500254:role/lambda_dynamodb_full
 			;;
 		esac
-		aws lambda create-function --function-name "${NAME}" --runtime python3.8 --zip-file fileb://function.zip --role arn:aws:iam::180390500254:role/lambda_default
 		rm python/"${FOLDER}"/function.zip
 	fi
 	if [ "$1" = update ]
-		aws lambda update-function-code --funtion-name "${NAME}" --zip-file fileb://function.zip
+	then
+		aws lambda update-function-code --function-name "${NAME}" --zip-file fileb://function.zip
 		rm python/"${FOLDER}"/function.zip
 	fi
 fi
