@@ -47,7 +47,7 @@ def event_handler(event, context):
 		'items': [{'name': e, 'selected': True if e == response['preferences']['M']['diet']['S'] else False}for e in diets]
 	}
 	preferences[1] = {
-		'title': 'Cooking Level',
+		'title': 'Cooking level',
 		'type': 'single_select',
 		'items': [{'name': e, 'selected': True if e == response['preferences']['M']['cooking_level']['S'] else False}for e in cooking_level]
 	}
