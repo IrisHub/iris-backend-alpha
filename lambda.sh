@@ -70,8 +70,10 @@ then
 			;;
 			"dynamodb_full") aws lambda create-function --function-name "${NAME}" --runtime python3.8 --zip-file fileb://function.zip --handler main.event_handler --role arn:aws:iam::180390500254:role/lambda_dynamodb_full
 			;;
+			"s3_dynamodb_full") aws lambda create-function --function-name "${NAME}" --runtime python3.8 --zip-file fileb://function.zip --handler main.event_handler --role arn:aws:iam::180390500254:role/lambda_s3_dynamodb_full
+			;;
 		esac
-		rm python/"${FOLDER}"/function.zip
+		rm ./python/"${FOLDER}"/function.zip
 	fi
 	if [ "$1" = update ]
 	then
