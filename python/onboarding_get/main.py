@@ -36,6 +36,7 @@ def event_handler(event, context):
 	ret['user_id'] = response['user_id']
 	ret['text'] = [
 		f"Hello, {name}",
+		f"Iris is loading your preferences into the app",
 		f"{diet}",
 		f"{cooking_level} chef",
 		f"{max_time_lunch} for lunch",
