@@ -29,6 +29,7 @@ def event_handler(event, context):
 		print(e)
 
 	hour = datetime.now().hour
+	hour = (hour-7) % 24
 	time_for_lunch = response['preferences']['M']['max_time_lunch']['S'].lower()
 	time_for_dinner = response['preferences']['M']['max_time_dinner']['S'].lower()
 	time_for_breakfast = "under 30 minutes"
