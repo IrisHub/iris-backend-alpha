@@ -26,6 +26,7 @@ def event_handler(event, context):
 	preferences = response['preferences']
 	diet = preferences['diet']
 	cooking_level = preferences['cooking_level']
+	favorite_ingredients = ', '.join([e for e in preferences['ingredients']])
 	disliked_foods = ', '.join([e for e in preferences['disliked_foods']])
 	max_time_dinner = preferences['max_time_dinner']
 	max_time_lunch = preferences['max_time_lunch']
@@ -41,7 +42,7 @@ def event_handler(event, context):
 		f"{cooking_level} chef",
 		f"{max_time_lunch} for lunch",
 		f"{max_time_dinner} for dinner",
-		f"{spice_tolerance} spice",
+		f"Common ingredients are {favorite_ingredients}",
 		f"Favorite cuisines are {top_cuisines}",
 		f"Dislikes {disliked_foods}",
 	]
