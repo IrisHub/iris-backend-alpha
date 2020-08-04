@@ -9,11 +9,11 @@ def event_handler(event, context):
 	table = dynamodb.Table('iris_users')
 
 	if 'token' in event.keys():
-		token = event['token']
+		token = event['token'].upper()
 	elif 'body' in event.keys():
-		token = json.loads(event['body'])['token']
+		token = json.loads(event['body'])['token'].upper()
 	else:
-		token = 'iris20'
+		token = 'IRIS20'
 
 	try:
 		response = table.query(IndexName='token-index', KeyConditionExpression=Key('token').eq(token))
@@ -30,7 +30,6 @@ def event_handler(event, context):
 	disliked_foods = ', '.join([e for e in preferences['disliked_foods']])
 	max_time_dinner = preferences['max_time_dinner']
 	max_time_lunch = preferences['max_time_lunch']
-	spice_tolerance = preferences['spice_tolerance']
 	top_cuisines = ', '.join([e for e in preferences['top_cuisines']])
 
 	ret = {}
@@ -38,13 +37,13 @@ def event_handler(event, context):
 	ret['text'] = [
 		f"Hello, {name}",
 		f"Iris is loading your preferences into the app",
-		f"{diet}",
+		f"Diet: {diet}",
 		f"{cooking_level} chef",
 		f"{max_time_lunch} for lunch",
 		f"{max_time_dinner} for dinner",
-		f"Common ingredients are {favorite_ingredients}",
-		f"Favorite cuisines are {top_cuisines}",
-		f"Dislikes {disliked_foods}",
+		f"Common ingredients are {favorite_ingredients}" if favorite_ingredients else f"No common ingredients yet",
+		f"Favorite cuisines are {top_cuisines}" if top_cuisines else f"No favorite cuisines yet",
+		f"Dislikes {disliked_foods}" if disliked_foods else f"No dislike foods yet",
 	]
 
 	return ret
