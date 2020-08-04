@@ -2,7 +2,7 @@ import os, json, boto3
 
 def event_handler(event, context):
 
-	name_to_kw = {'Diet': 'diet', 'Cooking level':'cooking_level', 'Time for lunch':'max_time_lunch', 'Time for dinner':'max_time_dinner', 'Spice tolerance':'spice_tolerance', 'Top cuisines':'top_cuisines', 'Disliked foods': 'disliked_foods'}
+	name_to_kw = {'Diet': 'diet', 'Cooking level':'cooking_level', 'Time for lunch':'max_time_lunch', 'Time for dinner':'max_time_dinner', 'Spice tolerance':'spice_tolerance', 'Top cuisines':'top_cuisines', 'Disliked foods': 'disliked_foods', 'Common ingredients': 'ingredients'}
 # def test(event):
 	dynamodb = boto3.resource('dynamodb')
 	table = dynamodb.Table('iris_users')
