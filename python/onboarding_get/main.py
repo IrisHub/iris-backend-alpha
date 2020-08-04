@@ -8,13 +8,13 @@ def event_handler(event, context):
 	dynamodb = boto3.resource('dynamodb')
 	table = dynamodb.Table('iris_users')
 
-	if 'token' in event.keys():
-		token = event['token'].upper()
+	print(event)
+	if 'access_code' in event.keys():
+		token = event['access_code'].upper()
 	elif 'body' in event.keys():
-		token = json.loads(event['body'])['token'].upper()
-	else:
-		token = 'IRIS20'
+		token = json.loads(event['body'])['access_code'].upper()
 
+	print(f"Token: {token}")
 	try:
 		response = table.query(IndexName='token-index', KeyConditionExpression=Key('token').eq(token))
 		response = response["Items"][0]
