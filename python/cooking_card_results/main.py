@@ -5,6 +5,7 @@ import math
 import random
 # import numpy as np
 from datetime import datetime
+from datetime import timedelta
 
 def event_handler(event, context):
 
@@ -26,6 +27,12 @@ def event_handler(event, context):
 		"none":3
 	}
 
+	difficulty_dict = {
+		'beginner': 0,
+		'intermediate': 1,
+		'advanced': 2
+	}
+
 	data = json.load(open('all_yummly.json', 'r'))
 	print(len(data))
 	dynamodb = boto3.client('dynamodb')
@@ -43,8 +50,8 @@ def event_handler(event, context):
 	except Exception as e:
 		print(e)
 
-	hour = datetime.now().hour
-	hour = (hour-7) % 24
+	hour = (datetime.now()-timedelta(hours=7)).hour
+	# hour = (hour-7) % 24
 	time_for_lunch = response['preferences']['M']['max_time_lunch']['S'].lower()
 	time_for_dinner = response['preferences']['M']['max_time_dinner']['S'].lower()
 	time_for_breakfast = "under 30 minutes"
@@ -63,12 +70,13 @@ def event_handler(event, context):
 	ret['category'] = query_type
 	ret['title'] = 'Your results for'
 	ret['item'] = query_string.title()
-	ret['subtitle'] = f"Created for {datetime.now().strftime('%I:%M %p')}"
+	ret['subtitle'] = f"Created for {(datetime.now()-timedelta(hours=7)).strftime('%I:%M %p')}"
 
 	data = [e for e in data if diet_dict[e['diet'].lower()] <= diet_dict[response['preferences']['M']['diet']['S'].lower()]]
 	print(f"Data after diet filter: {len(data)}")
 	common_ingredients = [e['S'].lower() for e in response['preferences']['M']['ingredients']['L']]
 	bad_ingredients = [e['S'].lower() for e in response['preferences']['M']['disliked_foods']['L']]
+	bad_recipes = [e['S'] for e in response['disliked_recipes']['L']]
 	if 'seafood' in bad_ingredients:
 		bad_ingredients.extend(['fish', 'shellfish'])
 	if "shellfish" in bad_ingredients:
@@ -81,6 +89,8 @@ def event_handler(event, context):
 	new_data = []
 	for e in data:
 		flag = True
+		if e['uuid'] in bad_recipes:
+			flag = False
 		for bad_ingredient in bad_ingredients:
 			for ingredient in e['ingredientLines']:
 				if bad_ingredient in ingredient.lower():
@@ -90,42 +100,49 @@ def event_handler(event, context):
 		e['score'] = 1
 
 		if query_type.lower() == 'ingredient':
-			if query_string.lower()[:-1] in [a.lower() for a in e['ingredientLines']]:
-				e['score'] *= 20
+			for a in e['ingredientLines']:
+				if query_string.lower()[:-1] in a.lower():
+					e['score'] = 50
 		elif query_type.lower() == 'dish':
-			if query_string.lower() in e['name'].lower():
-				e['score'] *= 20
+			if query_string.lower()[:-1] in e['name'].lower():
+				e['score'] = 50
 		elif query_type.lower() == 'cuisine':
 			if query_string.lower() == e['cuisine'].lower():
-				e['score'] *= 20
+				e['score'] = 50
 		else:
 			print("LSKJDFLSKADJFKJ")
 		if "30" in cooking_time:
 			if e['totalTimeInSeconds'] <= 30*60:
-				e['score'] *= 8
+				e['score'] += 2
 		elif "45" in cooking_time:
 			if e['totalTimeInSeconds'] <= 45*60:
-				e['score'] *= 8
-		else:
-			if e['totalTimeInSeconds'] <= 60*60:
-				e['score'] *= 8
+				e['score'] += 2
 		
-		for ingredient in 'common_ingredients':
+		if meal == 'Lunch' and 'lunch' in e['course'].lower():
+			e['score'] += 2
+		elif meal == 'Breakfast' and 'breakfast' in e['course'].lower():
+			e['score'] += 2
+
+		for ingredient in common_ingredients:
 			for a in e['ingredientLines']:
 				if ingredient.lower() in a.lower():
-					e['score'] *= 2
+					e['score'] += 1
 		if e['cuisine'].lower() in top_cuisines:
-			e['score'] *= 3
-		if e['difficulty'].lower() == difficulty:
-			e['score'] *= 5
+			e['score'] += 3
+		if difficulty_dict[e['difficulty'].lower()] <= difficulty_dict[difficulty]:
+			e['score'] += 5
 
 		new_data.append(e)
 
 
 	data = new_data
-	data = data.sort(reverse=True, key=lambda x: x['score'])
+	data = sorted(data, reverse=True, key=lambda x: x['score'])
+	# data.sort(key=lambda x: x['score'])
+
+	print(len(data))
 
 	recipes = data[:3]
+	print([e['score'] for e in recipes])
 	recipe_list = [{
 		'title': e['name'],
 		'id': e['uuid'],
@@ -134,11 +151,11 @@ def event_handler(event, context):
 		'difficulty': e['difficulty'],
 		'ingredients': e['ingredientLines'],
 		'link': e['url'],
-		'image_url': f"https://yummly-images.s3-us-west-1.amazonaws.com/img{e['image_id']}.jpg"
-
+		'image_url': f"https://yummly-images.s3-us-west-1.amazonaws.com/img{e['image_id']}.jpg",
+		# 'image_url': f"https://yummly-images.s3-us-west-1.amazonaws.com/img00001.jpg",
 	} for e in recipes]
 
-	ret['result'] = recipe_list
+	ret['results'] = recipe_list
 
 	# sample_data = {
 	# 	'category': "ingredient",
@@ -230,4 +247,4 @@ def event_handler(event, context):
 	# 	]
 	# }
 
-	return json.loads(json.dumps(results))
+	return json.loads(json.dumps(ret))
