@@ -20,7 +20,7 @@ def event_handler(event, context):
 	elif 'body' in event.keys():
 		user_id = json.loads(event['body'])['user_id']
 
-	options = json.load(open('info.json', 'r'))
+	options = json.loads(open('info.json', 'r').read())
 
 	try:
 		response = dynamodb.get_item(TableName='iris_users', Key={"user_id":{"S":str(user_id)}})
