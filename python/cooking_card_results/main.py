@@ -109,6 +109,9 @@ def event_handler(event, context):
 		elif query_type.lower() == 'cuisine':
 			if query_string.lower() == e['cuisine'].lower():
 				e['score'] = 50
+
+		if e['score'] < 50:
+			flag = False
 		else:
 			print("LSKJDFLSKADJFKJ")
 		if "30" in cooking_time:
