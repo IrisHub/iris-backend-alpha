@@ -3,22 +3,10 @@ import json
 import time
 import math
 import random
-# import numpy as np
 from datetime import datetime
 from datetime import timedelta
 
 def event_handler(event, context):
-
-# def test():
-	# now = time.time()
-	# s3 = boto3.client('s3')
-	# data = s3.get_object(Bucket='yummly-recipes', Key='all_yummly.json')
-	# data = data['Body'].read().decode('utf-8')
-
-	# data = json.loads(data)
-
-	# print(len(data)) {"user_id":	"17ef5c4b-3ac9-4548-a309-41e30a61c6e8", "query": {"query_type": "ingredient", "query_body": "Chicken"}}
-	# print(f"Time for execution: {time.time()- now}")
 	diet_dict = {
 		"vegan": 0,
 		"vegetarian": 1,
@@ -110,8 +98,8 @@ def event_handler(event, context):
 			if query_string.lower() == e['cuisine'].lower():
 				e['score'] = 50
 
-		if e['score'] < 50:
-			flag = False
+		# if e['score'] < 50:
+		# 	flag = False
 		else:
 			print("LSKJDFLSKADJFKJ")
 		if "30" in cooking_time:
