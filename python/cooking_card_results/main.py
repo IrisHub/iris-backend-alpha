@@ -132,7 +132,7 @@ def event_handler(event, context):
 
 	print(len(data))
 
-	recipes = data[:3]
+	recipes = data[:6] if len(data) >= 6 else data
 	print([e['score'] for e in recipes])
 	recipe_list = [{
 		'title': e['name'],
