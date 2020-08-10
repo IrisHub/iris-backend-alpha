@@ -63,7 +63,7 @@ def event_handler(event, context):
 
 	ingredient_weights = [e['weight'] for e in ingredients]
 	ingredient_weights = [e/sum(ingredient_weights) for e in ingredient_weights]
-	ret_ingredients = [{'name':e['name'], 'image':e['img'], 'discover':False, 'ideas':False, 'category':'ingredient'} for e in ingredients]
+	ret_ingredients = [{'name':e['name'], 'image':e['img'], 'discover':False, 'ideas':False, 'category':'Ingredient'} for e in ingredients]
 
 	discover = np.random.choice(ret_ingredients, size=6, p=ingredient_weights).tolist()
 	for e in discover:
@@ -82,7 +82,7 @@ def event_handler(event, context):
 
 	dish_weights = [e['weight'] for e in dishes]
 	dish_weights = [e/sum(dish_weights) for e in dish_weights]
-	ret_dishes = [{'name':e['name'], 'image':e['img'], 'discover':False, 'ideas':False, 'category':'dish'} for e in dishes]
+	ret_dishes = [{'name':e['name'], 'image':e['img'], 'discover':False, 'ideas':False, 'category':'Dish'} for e in dishes]
 	discover = np.random.choice(ret_dishes, size=6, p=dish_weights).tolist()
 	for e in discover:
 		e['discover'] = True
@@ -91,7 +91,7 @@ def event_handler(event, context):
 		e['ideas'] = True
 
 	cuisines = options['cuisines']
-	ret_cuisines = [{'name':e['name'], 'image':e['img'], 'discover':False, 'ideas':False, 'category':'cuisine'} for e in cuisines]
+	ret_cuisines = [{'name':e['name'], 'image':e['img'], 'discover':False, 'ideas':False, 'category':'Cuisine'} for e in cuisines]
 	discover = random.sample(ret_cuisines, 6)
 	for e in discover:
 		e['discover'] = True
